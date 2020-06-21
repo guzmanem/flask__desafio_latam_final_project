@@ -1,16 +1,5 @@
-from apscheduler.schedulers.background import BackgroundScheduler
-from flask import request, jsonify
 import flask
-
-
-def sensor():
-    """ Function for test purposes. """
-    print("Scheduler is alive!")
-    app.logger.info('test')
-
-sched = BackgroundScheduler(daemon=True)
-sched.add_job(sensor,'interval',minutes=1)
-sched.start()
+from flask import request, jsonify
 
 app = flask.Flask(__name__)
 
