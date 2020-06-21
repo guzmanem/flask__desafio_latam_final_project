@@ -1,2 +1,2 @@
 web: gunicorn wsgi:app
-clock: python app/cronjob.py
+clock: python app/jobs/cronjob.py
