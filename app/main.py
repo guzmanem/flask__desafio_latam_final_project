@@ -30,6 +30,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 def prediction():
    loaded_model = pickle.load(open('app/model_adaboostclassifier.sav', 'rb'))
    df = pd.DataFrame(data=request.json["body"])
+   df.drop(['key','name','prediction'], axis=1, inplace=True)
    df['i_vul'] = (df['alums_pref'] + df['alums_prior']) / df['alumns_class']
    df.drop(['alums_pref','alums_prior','alumns_class'],axis=1,inplace=True)
    list_atributos_dummies = ['cod_pro_rbd', 'cod_depe2', 'cod_ense', 'cod_jor', 'cod_des_cur', 'gen_alu']
