@@ -1,16 +1,35 @@
 import flask
 from flask import request, jsonify
+from flask_cors import CORS, cross_origin
+from logging.config import dictConfig
 # Data Science libraries
 import pandas as pd
 import numpy as np
 import pickle
 
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
+
 app = flask.Flask(__name__)
 
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 @app.route('/api/v1/', methods=['POST'])
 def prediction():
    loaded_model = pickle.load(open('app/model_adaboostclassifier.sav', 'rb'))
-   df = pd.DataFrame(data=request.json)
+   df = pd.DataFrame(data=request.json["body"])
    df['i_vul'] = (df['alums_pref'] + df['alums_prior']) / df['alumns_class']
    df.drop(['alums_pref','alums_prior','alumns_class'],axis=1,inplace=True)
    list_atributos_dummies = ['cod_pro_rbd', 'cod_depe2', 'cod_ense', 'cod_jor', 'cod_des_cur', 'gen_alu']
@@ -41,11 +60,16 @@ def prediction():
          'cod_ense_910', 'cod_jor_2', 'cod_jor_3', 'cod_jor_4', 'cod_des_cur_1',
          'cod_des_cur_2', 'cod_des_cur_3', 'gen_alu_2']
    df_reindex = df.reindex(columns = dummies_columns, fill_value=0)
-   return(jsonify(list(loaded_model.predict(df_reindex))))
+   response = jsonify(list(loaded_model.predict(df_reindex)))
+   app.logger.info('%s respuesta generada', response)
+   response.headers.add("Access-Control-Allow-Origin", "*")
+   return(response)
+
+
 
 @app.route('/api/v1/', methods=['GET'])
 def instructions():
-   return(jsonify({
+   response = jsonify({
       "average_psu": "Tipo numérico, nota obtenida del PSU.",
 		"average_nem": "Tipo numérico, nota promedia obtenida en media.",
 		"prom_notas_alu": "Tipo numérico, nota final obtenida en cuato de medio.",
@@ -60,4 +84,6 @@ def instructions():
 		"alums_pref": "Tipo numérico, cantidad de alumnos preferenciales en el aula.",
 		"alums_prior": "Tipo numérico, cantidad de alumnos prioritarias en el aula.",
 		"alumns_class": "Tipo numérico, cantidad de alumnos total en el aula"
-   }))
+   })
+   response.headers.add("Access-Control-Allow-Origin", "*")
+   return(response)
