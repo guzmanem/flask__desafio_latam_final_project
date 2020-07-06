@@ -3,4 +3,4 @@ gunicorn==20.0.4
 apscheduler==3.6.3
 pandas==1.0.1
 numpy==1.18.1
-pickle==1.1
+pickleshare==0.7.5
