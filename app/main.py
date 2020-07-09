@@ -85,7 +85,10 @@ def instructions():
 		"edad_alu": "Tipo numérico, edad del alumno.",
 		"alums_pref": "Tipo numérico, cantidad de alumnos preferenciales en el aula.",
 		"alums_prior": "Tipo numérico, cantidad de alumnos prioritarias en el aula.",
-		"alumns_class": "Tipo numérico, cantidad de alumnos total en el aula"
+        "alumns_class": "Tipo numérico, cantidad de alumnos total en el aula",
+        "key": "Tipo numérico, id único del alumno",
+        "name": "Tipo texto, nombre del alumno (en que caso de no proporcionar dejar vacío)",
+        "prediction": "Tipo numérico, dejar vacío"
    })
    response.headers.add("Access-Control-Allow-Origin", "*")
    return(response)
